@@ -16,6 +16,7 @@ enum AssetType {
   image,
   video,
   audio,
+  any,
 }
 
 /// {@template photo_manager.ThumbnailFormat}
@@ -41,7 +42,7 @@ enum ResizeMode { none, fast, exact }
 ///  * [Apple documentation](https://developer.apple.com/documentation/photokit/phimagecontentmode)
 enum ResizeContentMode { fit, fill, def }
 
-enum OrderOptionType { createDate, updateDate }
+enum OrderOptionType { createDate, updateDate, fileSize }
 
 /// {@template photo_manager.PMRequestState}
 /// Indicate the current state when an asset is loading with [PMProgressHandler].

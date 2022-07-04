@@ -1,8 +1,10 @@
 package com.fluttercandies.photo_manager.core.utils
 
 import android.provider.MediaStore
+import android.util.Log
 import com.fluttercandies.photo_manager.constant.AssetType
 import com.fluttercandies.photo_manager.core.entity.*
+import kotlin.reflect.typeOf
 
 object ConvertUtils {
     fun convertToGalleryResult(list: List<GalleryEntity>): Map<String, Any> {
@@ -85,6 +87,27 @@ object ConvertUtils {
             allowNullable = durationMap["allowNullable"] as Boolean
         }
 
+        val mimeTypesMap = map["mimeTypes"] as Map<*, *>
+        filterOptions.mimeTypesConstraint = FilterCond.MimeTypesConstraint().apply {
+            types = (mimeTypesMap["types"] as List<*>).filterIsInstance<String>()
+            ignoreTypes = mimeTypesMap["ignoreTypes"] as Boolean
+        }
+
+        val fileSizeMap = map["fileSize"] as Map<*, *>
+        filterOptions.fileSizeConstraint = FilterCond.FileSizeConstraint().apply {
+            val minVal = fileSizeMap["min"]
+            min = if (minVal is Long)
+                minVal
+            else
+                (minVal as Int).toLong()
+            val maxVal = fileSizeMap["max"]
+            max = if (maxVal is Long)
+                maxVal
+            else
+                (maxVal as Int).toLong()
+            ignoreSize = fileSizeMap["ignoreSize"] as Boolean
+        }
+
         return filterOptions
     }
 
@@ -113,6 +136,7 @@ object ConvertUtils {
             val key = when (keyIndex) {
                 0 -> MediaStore.MediaColumns.DATE_ADDED
                 1 -> MediaStore.MediaColumns.DATE_MODIFIED
+                2 -> MediaStore.MediaColumns.SIZE
                 else -> null
             } ?: continue
             list.add(OrderByCond(key, asc))

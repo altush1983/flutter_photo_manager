@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../internal/enums.dart';
@@ -15,6 +16,8 @@ class FilterOption {
     this.needTitle = false,
     this.sizeConstraint = const SizeConstraint(),
     this.durationConstraint = const DurationConstraint(),
+    this.mimeTypesConstraint = const MimeTypesConstraint(),
+    this.fileSizeConstraint = const FileSizeConstraint(),
   });
 
   /// This property affects performance on iOS.
@@ -28,16 +31,24 @@ class FilterOption {
   /// See [DurationConstraint], ignore in [AssetType.image].
   final DurationConstraint durationConstraint;
 
+  final MimeTypesConstraint mimeTypesConstraint;
+
+  final FileSizeConstraint fileSizeConstraint;
+
   /// Create a new [FilterOption] with specific properties merging.
   FilterOption copyWith({
     bool? needTitle,
     SizeConstraint? sizeConstraint,
     DurationConstraint? durationConstraint,
+    MimeTypesConstraint? mimeTypesConstraint,
+    FileSizeConstraint? fileSizeConstraint,
   }) {
     return FilterOption(
       needTitle: needTitle ?? this.needTitle,
       sizeConstraint: sizeConstraint ?? this.sizeConstraint,
       durationConstraint: durationConstraint ?? this.durationConstraint,
+      mimeTypesConstraint: mimeTypesConstraint ?? this.mimeTypesConstraint,
+      fileSizeConstraint: fileSizeConstraint ?? this.fileSizeConstraint,
     );
   }
 
@@ -55,6 +66,8 @@ class FilterOption {
       'title': needTitle,
       'size': sizeConstraint.toMap(),
       'duration': durationConstraint.toMap(),
+      'mimeTypes': mimeTypesConstraint.toMap(),
+      'fileSize': fileSizeConstraint.toMap(),
     };
   }
 
@@ -68,11 +81,19 @@ class FilterOption {
     return other is FilterOption &&
         needTitle == other.needTitle &&
         sizeConstraint == other.sizeConstraint &&
-        durationConstraint == other.durationConstraint;
+        durationConstraint == other.durationConstraint &&
+        mimeTypesConstraint == other.mimeTypesConstraint &&
+        fileSizeConstraint == other.fileSizeConstraint;
   }
 
   @override
-  int get hashCode => hashValues(needTitle, sizeConstraint, durationConstraint);
+  int get hashCode => hashValues(
+    needTitle,
+    sizeConstraint,
+    durationConstraint,
+    mimeTypesConstraint,
+    fileSizeConstraint,
+  );
 }
 
 /// Constraints of asset pixel width and height.
@@ -180,6 +201,67 @@ class DurationConstraint {
 
   @override
   int get hashCode => hashValues(min, max, allowNullable);
+}
+
+@immutable
+class MimeTypesConstraint {
+  const MimeTypesConstraint({
+    this.types = const [],
+    this.ignoreTypes = false,
+  });
+
+  final List<String> types;
+  final bool ignoreTypes;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'types': types,
+      'ignoreTypes': ignoreTypes,
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MimeTypesConstraint &&
+        listEquals(types, other.types) &&
+        ignoreTypes == other.ignoreTypes;
+  }
+
+  @override
+  int get hashCode => hashValues(types, ignoreTypes);
+}
+
+@immutable
+class FileSizeConstraint {
+  const FileSizeConstraint({
+    this.min = 0,
+    this.max = 0x7fffffffffffffff,
+    this.ignoreSize = true,
+  });
+
+  final int min;
+  final int max;
+
+  final bool ignoreSize;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'min': min,
+      'max': max,
+      'ignoreSize': ignoreSize,
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is FileSizeConstraint &&
+        min == other.min &&
+        max == other.max &&
+        ignoreSize == other.ignoreSize;
+  }
+
+  @override
+  int get hashCode => hashValues(min, max, ignoreSize);
 }
 
 @immutable

@@ -233,10 +233,12 @@ interface IDBUtils {
         val haveImage = RequestTypeUtils.containsImage(type)
         val haveVideo = RequestTypeUtils.containsVideo(type)
         val haveAudio = RequestTypeUtils.containsAudio(type)
+        val haveAny = RequestTypeUtils.containsAny(type)
 
         var imageCondString = ""
         var videoCondString = ""
         var audioCondString = ""
+        var anyCondString = ""
 
         if (haveImage) {
             val imageCond = filterOption.imageOption
@@ -268,6 +270,21 @@ interface IDBUtils {
             args.addAll(durationArgs)
         }
 
+        if (haveAny) {
+            val anyCond = filterOption.anyOption
+            anyCondString = "$typeKey >= 0"
+            val mimeTypesCond = anyCond.mimeTypesCond()
+            if (mimeTypesCond.isNotEmpty()) {
+                anyCondString += " AND $mimeTypesCond"
+                args.addAll(anyCond.mimeTypesArgs())
+            }
+            val fileSizeCond = anyCond.fileSizeCond();
+            if (fileSizeCond.isNotEmpty()) {
+                anyCondString += " AND $fileSizeCond"
+                args.addAll(anyCond.fileSizeArgs())
+            }
+        }
+
         if (haveImage) {
             cond.append("( $imageCondString )")
         }
@@ -284,6 +301,13 @@ interface IDBUtils {
                 cond.append("OR ")
             }
             cond.append("( $audioCondString )")
+        }
+
+        if (haveAny) {
+            if (cond.isNotEmpty()) {
+                cond.append("OR ")
+            }
+            cond.append("( $anyCondString )")
         }
 
         return "AND ( $cond )"

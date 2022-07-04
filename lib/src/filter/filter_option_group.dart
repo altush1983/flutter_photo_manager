@@ -14,6 +14,7 @@ class FilterOptionGroup {
     FilterOption imageOption = const FilterOption(),
     FilterOption videoOption = const FilterOption(),
     FilterOption audioOption = const FilterOption(),
+    FilterOption anyOption = const FilterOption(),
     this.containsPathModified = false,
     this.containsLivePhotos = true,
     this.onlyLivePhotos = false,
@@ -24,6 +25,7 @@ class FilterOptionGroup {
     _map[AssetType.image] = imageOption;
     _map[AssetType.video] = videoOption;
     _map[AssetType.audio] = audioOption;
+    _map[AssetType.any] = anyOption;
     this.createTimeCond = createTimeCond ?? this.createTimeCond;
     this.updateTimeCond = updateTimeCond ?? this.updateTimeCond;
     this.orders.addAll(orders);
@@ -91,6 +93,8 @@ class FilterOptionGroup {
         'video': getOption(AssetType.video).toMap(),
       if (_map.containsKey(AssetType.audio))
         'audio': getOption(AssetType.audio).toMap(),
+      if (_map.containsKey(AssetType.any))
+        'any': getOption(AssetType.any).toMap(),
       'containsPathModified': containsPathModified,
       'containsLivePhotos': containsLivePhotos,
       'onlyLivePhotos': onlyLivePhotos,

@@ -22,20 +22,21 @@ class RequestType {
   static const int _imageValue = 1;
   static const int _videoValue = 1 << 1;
   static const int _audioValue = 1 << 2;
+  static const int _anyValue = 1 << 3;
 
-  static const RequestType all = RequestType(
-    _imageValue | _videoValue | _audioValue,
-  );
   static const RequestType common = RequestType(_imageValue | _videoValue);
   static const RequestType image = RequestType(_imageValue);
   static const RequestType video = RequestType(_videoValue);
   static const RequestType audio = RequestType(_audioValue);
+  static const RequestType any = RequestType(_anyValue);
 
   bool containsImage() => value & _imageValue == _imageValue;
 
   bool containsVideo() => value & _videoValue == _videoValue;
 
   bool containsAudio() => value & _audioValue == _audioValue;
+
+  bool containsAny() => value & _anyValue == _anyValue;
 
   bool containsType(RequestType type) => value & type.value == type.value;
 

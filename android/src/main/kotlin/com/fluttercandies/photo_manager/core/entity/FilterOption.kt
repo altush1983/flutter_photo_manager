@@ -9,6 +9,7 @@ class FilterOption(map: Map<*, *>) {
     val videoOption = ConvertUtils.getOptionFromType(map, AssetType.Video)
     val imageOption = ConvertUtils.getOptionFromType(map, AssetType.Image)
     val audioOption = ConvertUtils.getOptionFromType(map, AssetType.Audio)
+    val anyOption = ConvertUtils.getOptionFromType(map, AssetType.Any)
     val createDateCond = ConvertUtils.convertToDateCond(map["createDate"] as Map<*, *>)
     val updateDateCond = ConvertUtils.convertToDateCond(map["updateDate"] as Map<*, *>)
     val containsPathModified = map["containsPathModified"] as Boolean
@@ -30,6 +31,8 @@ class FilterCond {
     var isShowTitle = false
     lateinit var sizeConstraint: SizeConstraint
     lateinit var durationConstraint: DurationConstraint
+    lateinit var mimeTypesConstraint: MimeTypesConstraint
+    lateinit var fileSizeConstraint: FileSizeConstraint
 
     companion object {
         private const val widthKey = MediaStore.Files.FileColumns.WIDTH
@@ -37,6 +40,9 @@ class FilterCond {
 
         @SuppressLint("InlinedApi")
         private const val durationKey = MediaStore.Video.VideoColumns.DURATION
+
+        private const val mimeTypeKey = MediaStore.Files.FileColumns.MIME_TYPE
+        private const val fileSizeKey = MediaStore.Files.FileColumns.SIZE
     }
 
     fun sizeCond(): String =
@@ -51,6 +57,16 @@ class FilterCond {
         ).toList().map {
             it.toString()
         }.toTypedArray()
+    }
+
+    fun mimeTypesCond(): String {
+        if (mimeTypesConstraint.ignoreTypes || mimeTypesConstraint.types.isEmpty()) return ""
+        return mimeTypesConstraint.types.joinToString(" OR ") { "$mimeTypeKey = ?" }
+    }
+
+    fun mimeTypesArgs(): Array<String> {
+        if (mimeTypesConstraint.ignoreTypes || mimeTypesConstraint.types.isEmpty()) return arrayOf()
+        return mimeTypesConstraint.types.toTypedArray()
     }
 
     fun durationCond(): String {
@@ -68,6 +84,19 @@ class FilterCond {
         ).map { it.toString() }.toTypedArray()
     }
 
+    fun fileSizeCond(): String {
+        if (fileSizeConstraint.ignoreSize) return ""
+        val baseCond = "$fileSizeKey >=? AND $fileSizeKey <=?"
+        return baseCond
+    }
+
+    fun fileSizeArgs(): Array<String> {
+        return arrayOf(
+            fileSizeConstraint.min,
+            fileSizeConstraint.max
+        ).map { it.toString() }.toTypedArray()
+    }
+
     class SizeConstraint {
         var minWidth = 0
         var maxWidth = 0
@@ -80,6 +109,17 @@ class FilterCond {
         var min: Long = 0
         var max: Long = 0
         var allowNullable: Boolean = false
+    }
+
+    class MimeTypesConstraint {
+        var types = listOf<String>()
+        var ignoreTypes = false
+    }
+
+    class FileSizeConstraint {
+        var min: Long = 0
+        var max: Long = 0
+        var ignoreSize = false
     }
 }
 
