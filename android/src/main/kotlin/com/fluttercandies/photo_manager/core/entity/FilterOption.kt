@@ -1,7 +1,9 @@
 package com.fluttercandies.photo_manager.core.entity
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import com.fluttercandies.photo_manager.constant.AssetType
 import com.fluttercandies.photo_manager.core.utils.ConvertUtils
 
@@ -33,6 +35,7 @@ class FilterCond {
     lateinit var durationConstraint: DurationConstraint
     lateinit var mimeTypesConstraint: MimeTypesConstraint
     lateinit var fileSizeConstraint: FileSizeConstraint
+    lateinit var downloadsOnlyConstraint: BoolConstraint
 
     companion object {
         private const val widthKey = MediaStore.Files.FileColumns.WIDTH
@@ -43,6 +46,9 @@ class FilterCond {
 
         private const val mimeTypeKey = MediaStore.Files.FileColumns.MIME_TYPE
         private const val fileSizeKey = MediaStore.Files.FileColumns.SIZE
+
+        @RequiresApi(Build.VERSION_CODES.R)
+        private const val isDownloadKey = MediaStore.MediaColumns.IS_DOWNLOAD
     }
 
     fun sizeCond(): String =
@@ -97,6 +103,14 @@ class FilterCond {
         ).map { it.toString() }.toTypedArray()
     }
 
+    fun downloadsOnlyCond(): String {
+        if (!downloadsOnlyConstraint.value) return ""
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            throw Exception("downloadsOnly flag needs Android R or higher")
+        }
+        return "$isDownloadKey>0"
+    }
+
     class SizeConstraint {
         var minWidth = 0
         var maxWidth = 0
@@ -121,6 +135,11 @@ class FilterCond {
         var max: Long = 0
         var ignoreSize = false
     }
+
+    class BoolConstraint {
+        var value: Boolean = false
+    }
+
 }
 
 data class DateCond(

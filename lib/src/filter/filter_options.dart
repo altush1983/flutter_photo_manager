@@ -18,6 +18,7 @@ class FilterOption {
     this.durationConstraint = const DurationConstraint(),
     this.mimeTypesConstraint = const MimeTypesConstraint(),
     this.fileSizeConstraint = const FileSizeConstraint(),
+    this.downloadsOnly = false,
   });
 
   /// This property affects performance on iOS.
@@ -34,6 +35,10 @@ class FilterOption {
   final MimeTypesConstraint mimeTypesConstraint;
 
   final FileSizeConstraint fileSizeConstraint;
+  
+  /// Get files only from Download folder
+  /// Available for Android R and higher
+  final bool downloadsOnly;
 
   /// Create a new [FilterOption] with specific properties merging.
   FilterOption copyWith({
@@ -42,6 +47,7 @@ class FilterOption {
     DurationConstraint? durationConstraint,
     MimeTypesConstraint? mimeTypesConstraint,
     FileSizeConstraint? fileSizeConstraint,
+    bool? downloadsOnly,
   }) {
     return FilterOption(
       needTitle: needTitle ?? this.needTitle,
@@ -49,6 +55,7 @@ class FilterOption {
       durationConstraint: durationConstraint ?? this.durationConstraint,
       mimeTypesConstraint: mimeTypesConstraint ?? this.mimeTypesConstraint,
       fileSizeConstraint: fileSizeConstraint ?? this.fileSizeConstraint,
+      downloadsOnly: downloadsOnly ?? this.downloadsOnly,
     );
   }
 
@@ -58,6 +65,9 @@ class FilterOption {
       needTitle: other.needTitle,
       sizeConstraint: other.sizeConstraint,
       durationConstraint: other.durationConstraint,
+      mimeTypesConstraint: other.mimeTypesConstraint,
+      fileSizeConstraint: other.fileSizeConstraint,
+      downloadsOnly: other.downloadsOnly,
     );
   }
 
@@ -68,6 +78,7 @@ class FilterOption {
       'duration': durationConstraint.toMap(),
       'mimeTypes': mimeTypesConstraint.toMap(),
       'fileSize': fileSizeConstraint.toMap(),
+      'downloadsOnly': downloadsOnly,
     };
   }
 
@@ -83,7 +94,8 @@ class FilterOption {
         sizeConstraint == other.sizeConstraint &&
         durationConstraint == other.durationConstraint &&
         mimeTypesConstraint == other.mimeTypesConstraint &&
-        fileSizeConstraint == other.fileSizeConstraint;
+        fileSizeConstraint == other.fileSizeConstraint &&
+        downloadsOnly == other.downloadsOnly;
   }
 
   @override
@@ -93,6 +105,7 @@ class FilterOption {
     durationConstraint,
     mimeTypesConstraint,
     fileSizeConstraint,
+    downloadsOnly,
   );
 }
 

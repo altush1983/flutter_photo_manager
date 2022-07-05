@@ -283,6 +283,10 @@ interface IDBUtils {
                 anyCondString += " AND $fileSizeCond"
                 args.addAll(anyCond.fileSizeArgs())
             }
+            val downloadsOnlyCond = anyCond.downloadsOnlyCond()
+            if (downloadsOnlyCond.isNotEmpty()) {
+                anyCondString += " AND $downloadsOnlyCond"
+            }
         }
 
         if (haveImage) {
