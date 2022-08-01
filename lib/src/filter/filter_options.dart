@@ -19,6 +19,8 @@ class FilterOption {
     this.mimeTypesConstraint = const MimeTypesConstraint(),
     this.fileSizeConstraint = const FileSizeConstraint(),
     this.downloadsOnly = false,
+    this.photosOnly = false,
+    this.screenshotsOnly = false,
   });
 
   /// This property affects performance on iOS.
@@ -40,6 +42,12 @@ class FilterOption {
   /// Available for Android R and higher
   final bool downloadsOnly;
 
+  // Get files without "screenshot" in path only
+  final bool photosOnly;
+
+  // Get files with "screenshot" in path only
+  final bool screenshotsOnly;
+
   /// Create a new [FilterOption] with specific properties merging.
   FilterOption copyWith({
     bool? needTitle,
@@ -48,6 +56,8 @@ class FilterOption {
     MimeTypesConstraint? mimeTypesConstraint,
     FileSizeConstraint? fileSizeConstraint,
     bool? downloadsOnly,
+    bool? photosOnly,
+    bool? screenshotsOnly,
   }) {
     return FilterOption(
       needTitle: needTitle ?? this.needTitle,
@@ -56,6 +66,8 @@ class FilterOption {
       mimeTypesConstraint: mimeTypesConstraint ?? this.mimeTypesConstraint,
       fileSizeConstraint: fileSizeConstraint ?? this.fileSizeConstraint,
       downloadsOnly: downloadsOnly ?? this.downloadsOnly,
+      photosOnly: photosOnly ?? this.photosOnly,
+      screenshotsOnly: screenshotsOnly ?? this.screenshotsOnly,
     );
   }
 
@@ -68,6 +80,8 @@ class FilterOption {
       mimeTypesConstraint: other.mimeTypesConstraint,
       fileSizeConstraint: other.fileSizeConstraint,
       downloadsOnly: other.downloadsOnly,
+      photosOnly: other.photosOnly,
+      screenshotsOnly: other.screenshotsOnly,
     );
   }
 
@@ -79,6 +93,8 @@ class FilterOption {
       'mimeTypes': mimeTypesConstraint.toMap(),
       'fileSize': fileSizeConstraint.toMap(),
       'downloadsOnly': downloadsOnly,
+      'photosOnly': photosOnly,
+      'screenshotsOnly': screenshotsOnly,
     };
   }
 
@@ -95,7 +111,9 @@ class FilterOption {
         durationConstraint == other.durationConstraint &&
         mimeTypesConstraint == other.mimeTypesConstraint &&
         fileSizeConstraint == other.fileSizeConstraint &&
-        downloadsOnly == other.downloadsOnly;
+        downloadsOnly == other.downloadsOnly &&
+        photosOnly == other.photosOnly &&
+        screenshotsOnly == other.screenshotsOnly;
   }
 
   @override
@@ -106,6 +124,8 @@ class FilterOption {
     mimeTypesConstraint,
     fileSizeConstraint,
     downloadsOnly,
+    photosOnly,
+    screenshotsOnly,
   );
 }
 

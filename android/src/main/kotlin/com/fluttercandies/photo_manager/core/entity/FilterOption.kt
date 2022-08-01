@@ -36,6 +36,8 @@ class FilterCond {
     lateinit var mimeTypesConstraint: MimeTypesConstraint
     lateinit var fileSizeConstraint: FileSizeConstraint
     lateinit var downloadsOnlyConstraint: BoolConstraint
+    lateinit var photosOnlyConstraint: BoolConstraint
+    lateinit var screenshotsOnlyConstraint: BoolConstraint
 
     companion object {
         private const val widthKey = MediaStore.Files.FileColumns.WIDTH
@@ -49,6 +51,8 @@ class FilterCond {
 
         @RequiresApi(Build.VERSION_CODES.R)
         private const val isDownloadKey = MediaStore.MediaColumns.IS_DOWNLOAD
+
+        private const val relativePathKey = MediaStore.MediaColumns.RELATIVE_PATH
     }
 
     fun sizeCond(): String =
@@ -108,7 +112,17 @@ class FilterCond {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             throw Exception("downloadsOnly flag needs Android R or higher")
         }
-        return "$isDownloadKey>0"
+        return " AND $isDownloadKey>0"
+    }
+
+    fun photosOnlyCond(): String {
+        if (!photosOnlyConstraint.value) return ""
+        return " AND lower($relativePathKey) not like '%screenshot%'"
+    }
+
+    fun screenshotsOnlyCond(): String {
+        if (!screenshotsOnlyConstraint.value) return ""
+        return " AND lower($relativePathKey) like '%screenshot%'"
     }
 
     class SizeConstraint {

@@ -250,6 +250,8 @@ interface IDBUtils {
                 imageCondString = "$imageCondString AND $sizeCond"
                 args.addAll(sizeArgs)
             }
+            imageCondString += imageCond.photosOnlyCond()
+            imageCondString += imageCond.screenshotsOnlyCond()
         }
 
         if (haveVideo) {
@@ -283,10 +285,7 @@ interface IDBUtils {
                 anyCondString += " AND $fileSizeCond"
                 args.addAll(anyCond.fileSizeArgs())
             }
-            val downloadsOnlyCond = anyCond.downloadsOnlyCond()
-            if (downloadsOnlyCond.isNotEmpty()) {
-                anyCondString += " AND $downloadsOnlyCond"
-            }
+            anyCondString += anyCond.downloadsOnlyCond()
         }
 
         if (haveImage) {

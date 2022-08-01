@@ -108,9 +108,14 @@ object ConvertUtils {
             ignoreSize = fileSizeMap["ignoreSize"] as Boolean
         }
 
-        val downloadsOnly = map["downloadsOnly"] as Boolean
         filterOptions.downloadsOnlyConstraint = FilterCond.BoolConstraint().apply {
-            value = downloadsOnly
+            value = map["downloadsOnly"] as Boolean
+        }
+        filterOptions.photosOnlyConstraint = FilterCond.BoolConstraint().apply {
+            value = map["photosOnly"] as Boolean
+        }
+        filterOptions.screenshotsOnlyConstraint = FilterCond.BoolConstraint().apply {
+            value = map["screenshotsOnly"] as Boolean
         }
 
         return filterOptions
